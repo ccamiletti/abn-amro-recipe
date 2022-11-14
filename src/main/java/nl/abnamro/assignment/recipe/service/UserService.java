@@ -34,6 +34,16 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public UserDTO findById(Long id) {
+        return userRepository.findById(id)
+                .map(userEntity ->
+                        UserDTO.builder().username(userEntity.getUserName())
+                                .password(userEntity.getPassword())
+                                .id(userEntity.getId()).build())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+    }
+
     public UserDTO save(UserDTO userDTO) throws Exception {
 
         UserEntity userEntity = new UserEntity();

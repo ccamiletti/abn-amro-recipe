@@ -1,22 +1,19 @@
 package nl.abnamro.assignment.recipe.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.util.Set;
 
-@Entity
-@Data
-@Table(name = "recipe")
+//@Entity
+//@Data
+//@Table(name = "ingredient")
 public class IngredientEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    @ManyToMany(mappedBy = "ingredients")
+    //@ManyToMany(mappedBy = "ingredients")
     private Set<RecipeEntity> recipesList;
 
 }

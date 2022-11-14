@@ -22,13 +22,16 @@
             <column name="portions" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="isVegetarian" type="BOOLEAN">
+            <column name="is_vegetarian" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
             <column name="instructions" type="VARCHAR(1000)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ingredients" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="user_id" type="INT">
                 <constraints nullable="false"/>
             </column>
         </createTable>

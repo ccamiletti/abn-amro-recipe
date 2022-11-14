@@ -7,8 +7,10 @@
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <include file="db/changelog/create-user-table-changelog-1.xml"/>
-    <include file="db/changelog/create-ingredient-table-changelog-1.xml"/>
     <include file="db/changelog/create-recipe-table-changelog-1.xml"/>
+    <!--
+    <include file="db/changelog/create-ingredient-table-changelog-1.xml"/>
     <include file="db/changelog/create-recipe-ingredient-table-changelog-1.xml"/>
+    -->
 
 </databaseChangeLog>

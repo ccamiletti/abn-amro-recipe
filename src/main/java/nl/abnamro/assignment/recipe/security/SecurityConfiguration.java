@@ -37,13 +37,10 @@ public class SecurityConfiguration {
     public SecurityFilterChain configure(final HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.httpBasic()
+                .and().csrf().disable().cors().disable()
+                .exceptionHandling()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user/sayHi").authenticated()
-                .antMatchers("/user/getUserName").authenticated()
-                .antMatchers("/user/public").permitAll()
-                .antMatchers("/user/admin/add").permitAll()
-                .antMatchers("/product/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();

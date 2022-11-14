@@ -1,13 +1,18 @@
 package nl.abnamro.assignment.recipe.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Data
 @Table(name = "recipe")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RecipeEntity {
 
     @Id
@@ -18,20 +23,15 @@ public class RecipeEntity {
 
     private Integer portions;
 
+    @Column(name = "is_vegetarian")
     private Boolean isVegetarian;
 
     private String instructions;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "recipe-ingredient",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
-    )
-    private Set<IngredientEntity> ingredients;
+    private String ingredients;
 
-
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private UserEntity user;
 
 }

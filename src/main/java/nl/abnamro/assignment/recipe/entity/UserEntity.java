@@ -3,6 +3,7 @@ package nl.abnamro.assignment.recipe.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 
 @Entity
@@ -18,6 +19,9 @@ public class UserEntity {
     private String userName;
 
     private String password;
+
+    @OneToMany(mappedBy="user")
+    private Set<RecipeEntity> recipeEntitySet;
 
 
 

@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                 .exceptionHandling()
                 .and()
                 .authorizeRequests()
+                .antMatchers("/user/admin/add").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();

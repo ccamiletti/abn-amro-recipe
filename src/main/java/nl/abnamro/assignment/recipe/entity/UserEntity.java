@@ -20,7 +20,7 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     private Set<RecipeEntity> recipeEntitySet;
 
 

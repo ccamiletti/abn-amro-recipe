@@ -5,13 +5,15 @@ import nl.abnamro.assignment.recipe.dto.RecipeDTO;
 import nl.abnamro.assignment.recipe.dto.UserDTO;
 import nl.abnamro.assignment.recipe.entity.RecipeEntity;
 import nl.abnamro.assignment.recipe.entity.UserEntity;
+import nl.abnamro.assignment.recipe.exception.RecipeException;
 import nl.abnamro.assignment.recipe.repository.RecipeRepository;
 import nl.abnamro.assignment.recipe.repository.UserRepository;
 import nl.abnamro.assignment.recipe.util.AppUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,66 +28,67 @@ public class RecipeService {
 
     public RecipeDTO findById(Long id) throws Exception {
         return recipeRepository.findByIdAndUserId(id,  getUserId())
-                .map(this::toDTO).orElseThrow(() -> new Exception("recipe not found"));
+                .map(this::toDTO).orElseThrow(() -> new RecipeException("Error getting recipe by id", HttpStatus.BAD_REQUEST));
     }
 
     public RecipeDTO findByName(String name) throws Exception {
         return recipeRepository.findByNameAndUserId(name, getUserId())
-                .map(this::toDTO).orElseThrow(() -> new Exception("recipe not found"));
+                .map(this::toDTO).orElseThrow(() -> new RecipeException("Error getting recipe by name", HttpStatus.BAD_REQUEST));
     }
 
-    public String add(RecipeDTO recipeDTO) {
+    public void add(RecipeDTO recipeDTO) throws RecipeException {
         recipeRepository.findByNameAndUserId(recipeDTO.getName(), getUserId())
-                .ifPresentOrElse((v) -> {
-                    throw new RuntimeException("BAD REQUEST, recipe already exist");
-                }, () -> {
-                    recipeRepository.save(toEntity(recipeDTO));
+                .ifPresent(recipeEntity -> {
+                    throw new RecipeException("Error saving recipe", HttpStatus.BAD_REQUEST);
                 });
-        return "recipe was added";
+        try {
+            recipeRepository.save(toEntity(recipeDTO));
+        } catch (Exception e) {
+            throw new RecipeException("Error saving recipe", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
-    public String delete(Long id) {
-        //recipeRepository.deleteByIdAndUserId(id, getUserId());
-        return "recipe was removed !!!";
+    public void delete(Long id) {
+        recipeRepository.deleteByIdAndUserId(id, getUserId());
     }
 
-    public String update(Long id, RecipeDTO recipeDTO) {
+    public void update(Long id, RecipeDTO recipeDTO) throws RecipeException {
         recipeRepository.findByIdAndUserId(id, getUserId())
-                .ifPresentOrElse((recipeEntity) -> {
-                    updateRecipeEntity(recipeDTO, recipeEntity);
-                    recipeRepository.save(recipeEntity);
-                }, () -> {
-                    throw new RuntimeException("BAD REQUEST, recipe not found");
-                });
-        return "recipe was updated !!!";
+                .map((entity) -> {
+                    updateRecipeEntity(recipeDTO, entity);
+                    return recipeRepository.save(entity);
+                }).orElseThrow(() ->new RecipeException("Error saving recipe", HttpStatus.BAD_REQUEST));
     }
 
-    public Flux<RecipeDTO> findAllByUser()  {
-        return recipeRepository.findByUserId(getUserId()).map(this::toDTO);
+    public List<RecipeDTO> findAllByUser()  {
+        return recipeRepository.findByUserId(getUserId())
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-//    public List<RecipeDTO> findVegetarian()  {
-//        return recipeRepository.findByUserId(getUserId())
-//                .stream()
-//                .filter(recipeEntity -> recipeEntity.getIsVegetarian())
-//                .map(this::toDTO)
-//                .toList();
-//    }
-//
-//    public List<RecipeDTO> findByCriteria(Boolean isVegetarian, Integer portions, Set<String> includeIngredients,
-//                                                Set<String> excludeIngredients, String instructionText) {
-//
-//        return recipeRepository.findByUserId(getUserId())
-//                .stream()
-//                .filter(recipeEntity -> filterSearch(isVegetarian, recipeEntity.getIsVegetarian()))
-//                .filter(recipeEntity -> filterSearch(portions, recipeEntity.getPortions()))
-//                .filter(recipeEntity -> filterIngredients(includeIngredients, recipeEntity.getIngredients(), Boolean.TRUE))
-//                .filter(recipeEntity -> filterIngredients(excludeIngredients, recipeEntity.getIngredients(), Boolean.FALSE))
-//                .filter(recipeEntity -> filterInstructionText(instructionText, recipeEntity.getInstructions()))
-//                .map(this::toDTO)
-//                .toList();
-//
-//    }
+    public List<RecipeDTO> findVegetarian()  {
+        return recipeRepository.findByUserId(getUserId())
+                .stream()
+                .filter(recipeEntity -> recipeEntity.getIsVegetarian())
+                .map(this::toDTO)
+                .toList();
+    }
+
+    public List<RecipeDTO> findByCriteria(Boolean isVegetarian, Integer portions, Set<String> includeIngredients,
+                                                Set<String> excludeIngredients, String includeInstructions) {
+
+        return recipeRepository.findByUserId(getUserId())
+                .stream()
+                .filter(recipeEntity -> filterSearch(isVegetarian, recipeEntity.getIsVegetarian()))
+                .filter(recipeEntity -> filterSearch(portions, recipeEntity.getPortions()))
+                .filter(recipeEntity -> filterIngredients(includeIngredients, recipeEntity.getIngredients(), Boolean.TRUE))
+                .filter(recipeEntity -> filterIngredients(excludeIngredients, recipeEntity.getIngredients(), Boolean.FALSE))
+                .filter(recipeEntity -> filterInstructionText(includeInstructions, recipeEntity.getInstructions()))
+                .map(this::toDTO)
+                .toList();
+    }
 
     private RecipeEntity toEntity(RecipeDTO recipeDTO) {
         return RecipeEntity.builder()
@@ -109,12 +112,7 @@ public class RecipeService {
     }
 
     private UserEntity getUserEntity() {
-        try {
-            return userRepository.findById(getUserId()).orElseThrow(() -> new RuntimeException("user not found"));
-        } catch (Exception e) {
-            System.out.println("error");
-            throw e;
-        }
+        return userRepository.findById(getUserId()).orElseThrow(() -> new RuntimeException("user not found"));
     }
 
     private Long getUserId() {

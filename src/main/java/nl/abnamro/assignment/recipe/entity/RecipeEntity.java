@@ -30,8 +30,7 @@ public class RecipeEntity {
 
     private String ingredients;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity user;
 
 }

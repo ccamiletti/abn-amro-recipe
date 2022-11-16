@@ -38,15 +38,9 @@ public class RecipeService {
 
     public void add(RecipeDTO recipeDTO) throws RecipeException {
         recipeRepository.findByNameAndUserId(recipeDTO.getName(), getUserId())
-                .ifPresent(recipeEntity -> {
+                .map(recipeEntity -> {
                     throw new RecipeException("Error saving recipe", HttpStatus.BAD_REQUEST);
-                });
-        try {
-            recipeRepository.save(toEntity(recipeDTO));
-        } catch (Exception e) {
-            throw new RecipeException("Error saving recipe", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+                }).orElseGet(() -> recipeRepository.save(toEntity(recipeDTO)));
     }
 
     public void delete(Long id) {
@@ -64,14 +58,6 @@ public class RecipeService {
     public List<RecipeDTO> findAllByUser()  {
         return recipeRepository.findByUserId(getUserId())
                 .stream()
-                .map(this::toDTO)
-                .toList();
-    }
-
-    public List<RecipeDTO> findVegetarian()  {
-        return recipeRepository.findByUserId(getUserId())
-                .stream()
-                .filter(recipeEntity -> recipeEntity.getIsVegetarian())
                 .map(this::toDTO)
                 .toList();
     }
@@ -139,9 +125,9 @@ public class RecipeService {
 
     }
 
-    private boolean filterInstructionText(String filterInstructionText, String instructions) {
-        return Optional.ofNullable(filterInstructionText)
-                .map(fp -> instructions.contains(filterInstructionText))
+    private boolean filterInstructionText(String filterInstruction, String instructions) {
+        return Optional.ofNullable(filterInstruction)
+                .map(fp -> instructions.contains(filterInstruction))
                 .orElse(Boolean.TRUE);
     }
 

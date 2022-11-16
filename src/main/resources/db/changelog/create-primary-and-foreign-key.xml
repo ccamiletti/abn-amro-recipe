@@ -9,20 +9,15 @@
     <changeSet author="admin" id="1">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="user"/>
+                <foreignKeyConstraintExists foreignKeyTableName="recipe" foreignKeyName="fk_recipe_user_id" />
             </not>
         </preConditions>
-        <createTable tableName="user">
-            <column autoIncrement="true" name="id" type="INT">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="user_name" type="VARCHAR(50)">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="password" type="VARCHAR(500)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="recipe"
+                                 constraintName="fk_recipe_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
     </changeSet>
 
 </databaseChangeLog>

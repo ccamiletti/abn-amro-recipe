@@ -2,7 +2,7 @@ package nl.abnamro.assignment.recipe.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class UserException extends Exception {
+public class UserException extends RuntimeException {
 
     public HttpStatus status;
     public UserException(String message, HttpStatus status) {

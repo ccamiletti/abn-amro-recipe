@@ -42,21 +42,9 @@ public class RecipeController {
         return new ResponseEntity<RecipeDTO>(recipeService.findById(id), HttpStatus.OK);
     }
 
-/*
-    @GetMapping("/findByName/{name}")
-    public RecipeDTO findByName(@PathVariable(name = "name") String name) throws Exception {
-        return recipeService.findByName(name);
-    }
-*/
-
     @GetMapping
     public List<RecipeDTO> getAll() {
         return recipeService.findAllByUser();
-    }
-
-    @GetMapping("/getVegetarian")
-    public List<RecipeDTO> getVegetarian() {
-        return recipeService.findVegetarian();
     }
 
     @GetMapping("/filter")

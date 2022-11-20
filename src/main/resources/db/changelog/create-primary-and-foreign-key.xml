@@ -9,20 +9,15 @@
     <changeSet author="admin" id="1">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="recipe-ingredient"/>
+                <foreignKeyConstraintExists foreignKeyTableName="recipe" foreignKeyName="fk_recipe_user_id" />
             </not>
         </preConditions>
-        <createTable tableName="recipe-ingredient">
-            <column autoIncrement="true" name="id" type="INT">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="recipe_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ingredient_id" type="INT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="recipe"
+                                 constraintName="fk_recipe_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
     </changeSet>
 
 </databaseChangeLog>

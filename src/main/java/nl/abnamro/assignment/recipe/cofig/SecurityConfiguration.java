@@ -1,4 +1,4 @@
-package nl.abnamro.assignment.recipe.security;
+package nl.abnamro.assignment.recipe.cofig;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
     private final UserDetailsService userDetailsService;
@@ -37,13 +35,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain configure(final HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.httpBasic()
+                .and().csrf().disable().cors().disable()
+                .exceptionHandling()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/user/sayHi").authenticated()
-                .antMatchers("/user/getUserName").authenticated()
-                .antMatchers("/user/public").permitAll()
-                .antMatchers("/user/admin/add").permitAll()
-                .antMatchers("/product/**").authenticated()
+                .antMatchers("/user").permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**").permitAll()
+                .antMatchers("/api/v3/api-docs").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();

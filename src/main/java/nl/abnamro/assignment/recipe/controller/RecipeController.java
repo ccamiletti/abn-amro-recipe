@@ -1,7 +1,8 @@
 package nl.abnamro.assignment.recipe.controller;
 
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.AllArgsConstructor;
 import nl.abnamro.assignment.recipe.dto.RecipeDTO;
 import nl.abnamro.assignment.recipe.exception.RecipeException;
@@ -42,24 +43,34 @@ public class RecipeController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RecipeDTO> findById(@PathVariable(name = "id") Long id) throws Exception {
-        return new ResponseEntity<RecipeDTO>(recipeService.findById(id), HttpStatus.OK);
+    public ResponseEntity<RecipeDTO> findById(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(recipeService.findById(id), HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get all user's recipes", notes = "Return a list of recipes")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RecipeDTO> getAll(@PageableDefault(size = 10) Pageable pageable) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (1..N)", defaultValue = "1"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page.", defaultValue = "20")
+    })
+    public List<RecipeDTO> getAll(@PageableDefault(page = 1, size = 20) Pageable pageable) {
         return recipeService.findAllByUser(pageable);
     }
 
-    @ApiOperation(value = "Get all user's recipes filtered ", notes = "Return a list of recipes based on parameters described below")
     @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (1..N)", defaultValue = "1"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page.", defaultValue = "20")
+    })
     public List<RecipeDTO> getRecipesFiltered(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
                                    @RequestParam(value = "portions", required = false) Integer portions,
                                    @RequestParam(value = "includeIngredients", required = false) Set<String> includeIngredients,
                                    @RequestParam(value = "excludeIngredients", required = false) Set<String> excludeIngredients,
                                    @RequestParam(value = "includeInstructions", required = false) String includeInstructions,
-                                              @PageableDefault(page = 0, size = 10) Pageable pageable) {
+                                              @PageableDefault(page = 1, size = 20) Pageable pageable) {
 
         return recipeService.findByCriteria(isVegetarian, portions, includeIngredients, excludeIngredients, includeInstructions, pageable);
 

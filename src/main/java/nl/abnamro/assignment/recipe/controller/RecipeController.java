@@ -43,8 +43,8 @@ public class RecipeController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RecipeDTO> findById(@PathVariable(name = "id") Long id) throws Exception {
-        return new ResponseEntity<RecipeDTO>(recipeService.findById(id), HttpStatus.OK);
+    public ResponseEntity<RecipeDTO> findById(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(recipeService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

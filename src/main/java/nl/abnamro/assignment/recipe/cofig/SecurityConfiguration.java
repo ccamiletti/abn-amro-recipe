@@ -1,4 +1,4 @@
-package nl.abnamro.assignment.recipe.security;
+package nl.abnamro.assignment.recipe.cofig;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

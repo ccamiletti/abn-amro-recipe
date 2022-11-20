@@ -48,7 +48,7 @@ public class RecipeController {
 
     @ApiOperation(value = "Get all user's recipes", notes = "Return a list of recipes")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RecipeDTO> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+    public List<RecipeDTO> getAll(@PageableDefault(size = 10) Pageable pageable) {
         return recipeService.findAllByUser(pageable);
     }
 

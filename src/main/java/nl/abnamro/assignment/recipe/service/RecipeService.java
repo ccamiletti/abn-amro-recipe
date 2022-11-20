@@ -1,6 +1,7 @@
 package nl.abnamro.assignment.recipe.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.abnamro.assignment.recipe.dto.RecipeDTO;
 import nl.abnamro.assignment.recipe.dto.UserDTO;
 import nl.abnamro.assignment.recipe.entity.RecipeEntity;
@@ -22,12 +23,14 @@ import static nl.abnamro.assignment.recipe.util.AppUtils.getIngredientsAsSet;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final UserRepository userRepository;
 
     public RecipeDTO findById(Long id) throws RecipeException {
+        log.info("finding recipe with id {}", id);
         return recipeRepository.findByIdAndUserId(id,  getUserId())
                 .map(this::toDTO).orElseThrow(() -> new RecipeException("Error getting recipe by id", HttpStatus.BAD_REQUEST));
     }
@@ -35,24 +38,32 @@ public class RecipeService {
     public void add(RecipeDTO recipeDTO) throws RecipeException {
         recipeRepository.findByNameAndUserId(recipeDTO.getName(), getUserId())
                 .map(recipeEntity -> {
+                    log.error("ERROR adding recipe {} {}", recipeDTO.getName(), "Recipe already exist");
                     throw new RecipeException("Error saving recipe", HttpStatus.BAD_REQUEST);
                 }).orElseGet(() -> recipeRepository.save(toEntity(recipeDTO)));
     }
 
     public void delete(Long id) {
+        log.info("Deleting recipe with ID: {}", id);
         recipeRepository.deleteByIdAndUserId(id, getUserId());
     }
 
     public void update(Long id, RecipeDTO recipeDTO) throws RecipeException {
+        log.info("Updating recipe with ID: {}", id);
         recipeRepository.findByIdAndUserId(id, getUserId())
                 .map(entity -> {
                     updateRecipeEntity(recipeDTO, entity);
                     return recipeRepository.save(entity);
-                }).orElseThrow(() ->new RecipeException("Error updating recipe", HttpStatus.BAD_REQUEST));
+                }).orElseThrow(() -> {
+                    log.info("ERROR Updating recipe with ID: {}. It does not exist", id);
+                    return new RecipeException("Error updating recipe", HttpStatus.BAD_REQUEST);
+                });
     }
 
     public List<RecipeDTO> findAllByUser(Pageable pageable)  {
-        return recipeRepository.findByUserId(pageable, getUserId())
+        Long userId = getUserId();
+        log.info("Getting all recipes by userId: {}", userId);
+        return recipeRepository.findByUserId(pageable, userId)
                 .stream()
                 .map(this::toDTO)
                 .toList();

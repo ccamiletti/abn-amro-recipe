@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import nl.abnamro.assignment.recipe.dto.RecipeDTO;
 import nl.abnamro.assignment.recipe.exception.RecipeException;
 import nl.abnamro.assignment.recipe.service.RecipeService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,19 +48,20 @@ public class RecipeController {
 
     @ApiOperation(value = "Get all user's recipes", notes = "Return a list of recipes")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RecipeDTO> getAll() {
-        return recipeService.findAllByUser();
+    public List<RecipeDTO> getAll(@PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return recipeService.findAllByUser(pageable);
     }
 
-    @ApiOperation(value = "Get all user's recipes filtered ", notes = "Return a list of recipes based on ")
+    @ApiOperation(value = "Get all user's recipes filtered ", notes = "Return a list of recipes based on parameters described below")
     @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RecipeDTO> getRecipesFiltered(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
                                    @RequestParam(value = "portions", required = false) Integer portions,
                                    @RequestParam(value = "includeIngredients", required = false) Set<String> includeIngredients,
                                    @RequestParam(value = "excludeIngredients", required = false) Set<String> excludeIngredients,
-                                   @RequestParam(value = "includeInstructions", required = false) String includeInstructions) {
+                                   @RequestParam(value = "includeInstructions", required = false) String includeInstructions,
+                                              @PageableDefault(page = 0, size = 10) Pageable pageable) {
 
-        return recipeService.findByCriteria(isVegetarian, portions, includeIngredients, excludeIngredients, includeInstructions);
+        return recipeService.findByCriteria(isVegetarian, portions, includeIngredients, excludeIngredients, includeInstructions, pageable);
 
     }
 

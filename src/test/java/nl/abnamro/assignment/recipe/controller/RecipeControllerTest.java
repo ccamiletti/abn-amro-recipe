@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -59,7 +60,7 @@ public class RecipeControllerTest {
     @Test
     public void test_getAllRecipes_OK() throws Exception {
         List<RecipeDTO> recipeDTOList = List.of(RecipeDTO.builder().id(1L).name("recipe 1").isVegetarian(Boolean.TRUE).build());
-        given(recipeService.findAllByUser()).willReturn(recipeDTOList);
+        given(recipeService.findAllByUser(PageRequest.of(0,10))).willReturn(recipeDTOList);
 
         MvcResult result = mvc.perform(get("/recipe").with(user(USER_NAME).password(PASSWORD))
                         .contentType(MediaType.APPLICATION_JSON))

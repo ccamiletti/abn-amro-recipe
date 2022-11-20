@@ -1,0 +1,47 @@
+version: "3.3"
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: abn_amro_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - 3306:3306
+    networks:
+      - abn-amro-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  abn-amro-app:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+    restart: on-failure
+    networks:
+      - abn-amro-network
+    volumes:
+      - app:/var/lib/app
+
+  adminer:
+    image: adminer
+    links:
+      - mysql
+    ports:
+      - 8888:8080
+    networks:
+      - abn-amro-network
+
+networks:
+  abn-amro-network:
+
+volumes:
+  mysql_data:
+  app:

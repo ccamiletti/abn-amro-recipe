@@ -9,6 +9,7 @@ import nl.abnamro.assignment.recipe.exception.RecipeException;
 import nl.abnamro.assignment.recipe.repository.RecipeRepository;
 import nl.abnamro.assignment.recipe.repository.UserRepository;
 import nl.abnamro.assignment.recipe.util.AppUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -50,17 +51,17 @@ public class RecipeService {
                 }).orElseThrow(() ->new RecipeException("Error updating recipe", HttpStatus.BAD_REQUEST));
     }
 
-    public List<RecipeDTO> findAllByUser()  {
-        return recipeRepository.findByUserId(getUserId())
+    public List<RecipeDTO> findAllByUser(Pageable pageable)  {
+        return recipeRepository.findByUserId(pageable, getUserId())
                 .stream()
                 .map(this::toDTO)
                 .toList();
     }
 
     public List<RecipeDTO> findByCriteria(Boolean isVegetarian, Integer portions, Set<String> includeIngredients,
-                                                Set<String> excludeIngredients, String includeInstructions) {
+                                                Set<String> excludeIngredients, String includeInstructions, Pageable pageable) {
 
-        return recipeRepository.findByUserId(getUserId())
+        return recipeRepository.findByUserId(pageable, getUserId())
                 .stream()
                 .filter(recipeEntity -> filterSearch(isVegetarian, recipeEntity.getIsVegetarian()))
                 .filter(recipeEntity -> filterSearch(portions, recipeEntity.getPortions()))

@@ -53,5 +53,14 @@ After the user was created, you have to use it in each postman call (just add it
 
 The entry point address of the API (recipe) is at http://localhost:1234/api/recipe
 
+# Access to the Data Base.
+Do you want to get access to the database?. please, open your browser and go to: http://localhost:8888/
+```
+System: MySQL
+Server: mysql-server
+Username: admin
+Password: admin
+Database: abn_amro_db
+```
 # Help
 Please fork and PR to improve the code.

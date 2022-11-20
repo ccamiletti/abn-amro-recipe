@@ -52,9 +52,9 @@ public class RecipeController {
             @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
                     value = "Results page you want to retrieve (1..N)", defaultValue = "1"),
             @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                    value = "Number of records per page.", defaultValue = "5")
+                    value = "Number of records per page.", defaultValue = "20")
     })
-    public List<RecipeDTO> getAll(@PageableDefault(size = 10) Pageable pageable) {
+    public List<RecipeDTO> getAll(@PageableDefault(page = 1, size = 20) Pageable pageable) {
         return recipeService.findAllByUser(pageable);
     }
 
@@ -63,14 +63,14 @@ public class RecipeController {
             @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
                     value = "Results page you want to retrieve (1..N)", defaultValue = "1"),
             @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
-                    value = "Number of records per page.", defaultValue = "5")
+                    value = "Number of records per page.", defaultValue = "20")
     })
     public List<RecipeDTO> getRecipesFiltered(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
                                    @RequestParam(value = "portions", required = false) Integer portions,
                                    @RequestParam(value = "includeIngredients", required = false) Set<String> includeIngredients,
                                    @RequestParam(value = "excludeIngredients", required = false) Set<String> excludeIngredients,
                                    @RequestParam(value = "includeInstructions", required = false) String includeInstructions,
-                                              @PageableDefault(page = 1, size = 5) Pageable pageable) {
+                                              @PageableDefault(page = 1, size = 20) Pageable pageable) {
 
         return recipeService.findByCriteria(isVegetarian, portions, includeIngredients, excludeIngredients, includeInstructions, pageable);
 

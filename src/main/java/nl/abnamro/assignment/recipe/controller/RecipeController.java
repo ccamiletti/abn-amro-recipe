@@ -1,11 +1,13 @@
 package nl.abnamro.assignment.recipe.controller;
 
 
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import nl.abnamro.assignment.recipe.dto.RecipeDTO;
 import nl.abnamro.assignment.recipe.exception.RecipeException;
 import nl.abnamro.assignment.recipe.service.RecipeService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,23 +39,24 @@ public class RecipeController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RecipeDTO> findById(@PathVariable(name = "id") Long id) throws Exception {
         return new ResponseEntity<RecipeDTO>(recipeService.findById(id), HttpStatus.OK);
     }
 
-    @GetMapping
+    @ApiOperation(value = "Get all user's recipes", notes = "Return a list of recipes")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RecipeDTO> getAll() {
         return recipeService.findAllByUser();
     }
 
-    @GetMapping("/filter")
+    @ApiOperation(value = "Get all user's recipes filtered ", notes = "Return a list of recipes based on ")
+    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RecipeDTO> getRecipesFiltered(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
                                    @RequestParam(value = "portions", required = false) Integer portions,
                                    @RequestParam(value = "includeIngredients", required = false) Set<String> includeIngredients,
                                    @RequestParam(value = "excludeIngredients", required = false) Set<String> excludeIngredients,
                                    @RequestParam(value = "includeInstructions", required = false) String includeInstructions) {
-
 
         return recipeService.findByCriteria(isVegetarian, portions, includeIngredients, excludeIngredients, includeInstructions);
 

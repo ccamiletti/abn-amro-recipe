@@ -26,14 +26,9 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final UserRepository userRepository;
 
-    public RecipeDTO findById(Long id) throws Exception {
+    public RecipeDTO findById(Long id) throws RecipeException {
         return recipeRepository.findByIdAndUserId(id,  getUserId())
                 .map(this::toDTO).orElseThrow(() -> new RecipeException("Error getting recipe by id", HttpStatus.BAD_REQUEST));
-    }
-
-    public RecipeDTO findByName(String name) throws Exception {
-        return recipeRepository.findByNameAndUserId(name, getUserId())
-                .map(this::toDTO).orElseThrow(() -> new RecipeException("Error getting recipe by name", HttpStatus.BAD_REQUEST));
     }
 
     public void add(RecipeDTO recipeDTO) throws RecipeException {
@@ -49,10 +44,10 @@ public class RecipeService {
 
     public void update(Long id, RecipeDTO recipeDTO) throws RecipeException {
         recipeRepository.findByIdAndUserId(id, getUserId())
-                .map((entity) -> {
+                .map(entity -> {
                     updateRecipeEntity(recipeDTO, entity);
                     return recipeRepository.save(entity);
-                }).orElseThrow(() ->new RecipeException("Error saving recipe", HttpStatus.BAD_REQUEST));
+                }).orElseThrow(() ->new RecipeException("Error updating recipe", HttpStatus.BAD_REQUEST));
     }
 
     public List<RecipeDTO> findAllByUser()  {

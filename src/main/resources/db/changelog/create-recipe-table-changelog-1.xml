@@ -13,7 +13,7 @@
             </not>
         </preConditions>
         <createTable tableName="recipe">
-            <column autoIncrement="true" name="id" type="INT">
+            <column autoIncrement="true" name="id" type="SERIAL">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="VARCHAR(50)">

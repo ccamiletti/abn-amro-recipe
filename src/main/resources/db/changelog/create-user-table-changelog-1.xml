@@ -12,8 +12,9 @@
                 <tableExists tableName="user"/>
             </not>
         </preConditions>
+
         <createTable tableName="user">
-            <column autoIncrement="true" name="id" type="INT">
+            <column autoIncrement="true" name="id" type="SERIAL">
                 <constraints primaryKey="true"/>
             </column>
             <column name="user_name" type="VARCHAR(50)">

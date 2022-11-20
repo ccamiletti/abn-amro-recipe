@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
                         UserDTO.builder().username(userEntity.getUserName())
                                 .password(userEntity.getPassword())
                                 .id(userEntity.getId()).build())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserException("User not found", HttpStatus.BAD_REQUEST));
 
     }
 
